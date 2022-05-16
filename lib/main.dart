@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: theme.copyWith(
         colorScheme: theme.colorScheme.copyWith(
           primary: Colors.deepPurpleAccent,
-          secondary: Colors.tealAccent[100],
+          secondary: Colors.deepPurple,
         ),
       ),
       home: PlacesListScreen(),
