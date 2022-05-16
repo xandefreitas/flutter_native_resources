@@ -1,7 +1,17 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class ImageInput extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class ImageInput extends StatefulWidget {
   const ImageInput({Key? key}) : super(key: key);
+
+  @override
+  State<ImageInput> createState() => _ImageInputState();
+}
+
+class _ImageInputState extends State<ImageInput> {
+  File? _storedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +27,18 @@ class ImageInput extends StatelessWidget {
             ),
           ),
           alignment: Alignment.center,
-          child: Text('Nenhuma Imagem!'),
+          child: _storedImage != null
+              ? Image.file(
+                  _storedImage!,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                )
+              : Text('Nenhuma Imagem!'),
         ),
         SizedBox(width: 8),
         Expanded(
           child: TextButton(
-            onPressed: () {},
+            onPressed: _takePicture,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -34,5 +50,17 @@ class ImageInput extends StatelessWidget {
         )
       ],
     );
+  }
+
+  _takePicture() async {
+    final ImagePicker _picker = ImagePicker();
+    XFile imageFile = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+    ) as XFile;
+
+    setState(() {
+      _storedImage = File(imageFile.path);
+    });
   }
 }
