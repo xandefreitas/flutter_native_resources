@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
-  const ImageInput({Key? key}) : super(key: key);
+  final Function onSelectImage;
+  const ImageInput({Key? key, required this.onSelectImage}) : super(key: key);
 
   @override
   State<ImageInput> createState() => _ImageInputState();
@@ -43,6 +44,7 @@ class _ImageInputState extends State<ImageInput> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.camera),
+                SizedBox(width: 8),
                 Text('Tirar Foto'),
               ],
             ),
@@ -62,5 +64,7 @@ class _ImageInputState extends State<ImageInput> {
     setState(() {
       _storedImage = File(imageFile.path);
     });
+
+    // widget.onSelectImage();
   }
 }
