@@ -31,4 +31,17 @@ class GreatPlaces with ChangeNotifier {
     );
     notifyListeners();
   }
+
+  Future<void> loadPlaces() async {
+    final dataList = await DbUtil.getData('places');
+    _items = dataList
+        .map((e) => Place(
+              id: e['id'],
+              title: e['title'],
+              location: PlaceLocation(address: '', latitude: 0, longitude: 0),
+              image: File(e['image']),
+            ))
+        .toList();
+    notifyListeners();
+  }
 }
