@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_resources/utils/location_util.dart';
 import 'package:location/location.dart';
 
 class LocationInput extends StatefulWidget {
@@ -10,6 +11,7 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   String? _previewImageUrl;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +26,24 @@ class _LocationInputState extends State<LocationInput> {
           ),
           child: _previewImageUrl == null
               ? Text('Localização não informada!')
-              : Image.network(
-                  _previewImageUrl!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
+              : _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : Image.network(
+                      _previewImageUrl!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: _getCurrentUserLocation,
+              onPressed: () {
+                setState(() {
+                  _isLoading = true;
+                  _getCurrentUserLocation();
+                });
+              },
               child: Row(
                 children: [
                   Icon(
@@ -65,5 +74,11 @@ class _LocationInputState extends State<LocationInput> {
 
   Future<void> _getCurrentUserLocation() async {
     final locationData = await Location().getLocation();
+
+    final staticMapImageUrl = LocationUtil.generateLocationPreviewImage(latitude: locationData.latitude!, longitude: locationData.longitude!);
+    setState(() {
+      _previewImageUrl = staticMapImageUrl;
+      _isLoading = false;
+    });
   }
 }
