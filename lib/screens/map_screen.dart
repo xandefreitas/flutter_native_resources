@@ -23,6 +23,13 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Selecione...'),
+        actions: [
+          if (!widget.isReadOnly)
+            IconButton(
+              onPressed: _pickedPosition == null ? null : () => Navigator.pop(context, _pickedPosition),
+              icon: Icon(Icons.check),
+            ),
+        ],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
