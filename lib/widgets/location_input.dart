@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_resources/screens/map_screen.dart';
 import 'package:flutter_native_resources/utils/location_util.dart';
 import 'package:location/location.dart';
+
+import '../models/place.dart';
 
 class LocationInput extends StatefulWidget {
   const LocationInput({Key? key}) : super(key: key);
@@ -55,7 +58,7 @@ class _LocationInputState extends State<LocationInput> {
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: _selectOnMap,
               child: Row(
                 children: [
                   Icon(
@@ -80,5 +83,16 @@ class _LocationInputState extends State<LocationInput> {
       _previewImageUrl = staticMapImageUrl;
       _isLoading = false;
     });
+  }
+
+  Future<void> _selectOnMap() async {
+    final selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: ((context) => MapScreen(initialLocation: PlaceLocation(latitude: 37.419857, longitude: -122.078827, address: ''))),
+      ),
+    );
+    if (selectedLocation == null) return;
   }
 }
