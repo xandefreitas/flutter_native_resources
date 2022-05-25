@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_resources/providers/great_places.dart';
 import 'package:flutter_native_resources/widgets/image_input.dart';
 import 'package:flutter_native_resources/widgets/location_input.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class PlaceFormScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class PlaceFormScreen extends StatefulWidget {
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _titleController = TextEditingController();
   File? _pickedImage;
+  LatLng? _pickedPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +36,14 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                   TextField(
                     controller: _titleController,
                     decoration: InputDecoration(labelText: 'Título'),
+                    onChanged: (text) {
+                      setState(() {});
+                    },
                   ),
                   SizedBox(height: 8),
                   ImageInput(onSelectImage: this._selectImage),
                   SizedBox(height: 8),
-                  LocationInput(),
+                  LocationInput(onSelectedPosition: this._selectPosition),
                 ],
               ),
             ),
@@ -51,7 +56,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
             ),
-            onPressed: _submitForm,
+            onPressed: isValidForm ? _submitForm : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -66,17 +71,28 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
   }
 
   void _submitForm() {
-    if (_titleController.text.isEmpty || _pickedImage == null) {
+    if (!isValidForm) {
       return;
     }
     Provider.of<GreatPlaces>(context, listen: false).addPlace(
       _titleController.text,
       _pickedImage!,
+      _pickedPosition!,
     );
     Navigator.pop(context);
   }
 
-  void _selectImage(File pickedImage) {
-    _pickedImage = pickedImage;
+  void _selectPosition(LatLng position) {
+    setState(() {
+      _pickedPosition = position;
+    });
   }
+
+  void _selectImage(File pickedImage) {
+    setState(() {
+      _pickedImage = pickedImage;
+    });
+  }
+
+  bool get isValidForm => _titleController.text.isNotEmpty && _pickedImage != null && _pickedPosition != null;
 }
